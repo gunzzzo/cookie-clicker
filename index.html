@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gunnars Game</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    repeating-linear-gradient(
+        45deg,
+        #8d5a36,
+        #8d5a36 20px,
+        #7a4e2f 20px,
+        #7a4e2f 40px
+    );
+
+    color:white;
+}
+
+.game{
+    width:900px;
+    max-width:95%;
+    padding:25px;
+
+    border-radius:25px;
+
+    background:rgba(40,20,10,.92);
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,.5),
+        inset 0 0 30px rgba(255,255,255,.05);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    font-size:3rem;
+}
+
+.layout{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.panel{
+    background:rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:15px;
+}
+
+.left{
+    width:220px;
+}
+
+.center{
+    flex:1;
+    min-width:320px;
+    text-align:center;
+}
+
+.right{
+    width:220px;
+}
+
+.stat{
+    margin:10px 0;
+    font-size:1.1rem;
+}
+
+#cookies{
+    color:gold;
+    font-size:2rem;
+    text-shadow:
+        0 0 10px gold,
+        0 0 20px gold;
+}
+
+.cookie-area{
+    position:relative;
+    width:320px;
+    height:320px;
+    margin:auto;
+}
+
+#cookie{
+    width:280px;
+    height:280px;
+
+    position:absolute;
+    left:20px;
+    top:20px;
+
+    cursor:pointer;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle at 30% 30%,
+        #f0b05a,
+        #c57a32 60%,
+        #8b4c19 100%
+    );
+
+    box-shadow:
+        inset -15px -15px rgba(0,0,0,.2),
+        0 10px 30px rgba(0,0,0,.35),
+        0 0 40px rgba(255,190,80,.4);
+
+    transition:.08s;
+}
+
+#cookie:active{
+    transform:scale(.94);
+}
+
+.chip{
+    width:25px;
+    height:25px;
+    border-radius:50%;
+    background:#4b2e1f;
+    position:absolute;
+}
+
+.cursor{
+    position:absolute;
+
+    width:0;
+    height:0;
+
+    border-top:20px solid white;
+    border-right:14px solid transparent;
+
+    transform:rotate(-20deg);
+
+    filter:
+    drop-shadow(2px 2px 2px rgba(0,0,0,.4));
+
+    animation:clickAnim 1.5s infinite;
+}
+
+.cursor::after{
+    content:"";
+    position:absolute;
+    left:-3px;
+    top:-18px;
+
+    width:3px;
+    height:22px;
+
+    background:white;
+
+    transform:rotate(-45deg);
+}
+
+@keyframes clickAnim{
+    0%,100%{
+        transform:rotate(-20deg);
+    }
+    50%{
+        transform:rotate(-35deg);
+    }
+}
+
+button{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+
+    border:none;
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:1rem;
+    font-weight:bold;
+
+    background:linear-gradient(
+        to bottom,
+        #ffe08a,
+        #dba642
+    );
+
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+.plus{
+    position:absolute;
+    color:white;
+    font-weight:bold;
+    font-size:26px;
+
+    animation:rise .8s forwards;
+}
+
+@keyframes rise{
+    from{
+        opacity:1;
+        transform:translateY(0);
+    }
+    to{
+        opacity:0;
+        transform:translateY(-60px);
+    }
+}
+
+#floating{
+    position:absolute;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<div class="game">
+
+    <h1>🍪 Cookie Clicker Deluxe</h1>
+
+    <div class="layout">
+
+        <div class="panel left">
+            <h2>Stats</h2>
+
+            <div class="stat">
+                Cookies:
+                <div id="cookies">0</div>
+            </div>
+
+            <div class="stat">
+                Per Click:
+                <span id="cpc">1</span>
+            </div>
+
+            <div class="stat">
+                Auto Clickers:
+                <span id="autoCount">0</span>
+            </div>
+        </div>
+
+        <div class="panel center">
+
+            <div class="cookie-area">
+
+                <div id="floating"></div>
+
+                <div id="cookie" onclick="clickCookie()">
+
+                    <div class="chip" style="top:35px;left:55px;"></div>
+                    <div class="chip" style="top:85px;left:160px;"></div>
+                    <div class="chip" style="top:150px;left:90px;"></div>
+                    <div class="chip" style="top:200px;left:180px;"></div>
+                    <div class="chip" style="top:120px;left:125px;"></div>
+
+                </div>
+
+                <div id="cursorArea"></div>
+
+            </div>
+
+        </div>
+
+        <div class="panel right">
+
+            <h2>Shop</h2>
+
+            <button onclick="buyUpgrade()">
+                Upgrade Click<br>
+                Cost:
+                <span id="upgradeCost">10</span>
+            </button>
+
+            <button onclick="buyAuto()">
+                Buy Cursor<br>
+                Cost:
+                <span id="autoCost">50</span>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+let cookies = 0;
+let cpc = 1;
+
+let upgradeCost = 10;
+
+let autoClickers = 0;
+let autoCost = 50;
+
+function updateDisplay(){
+    document.getElementById("cookies").textContent =
+        Math.floor(cookies);
+
+    document.getElementById("cpc").textContent =
+        cpc;
+
+    document.getElementById("autoCount").textContent =
+        autoClickers;
+
+    document.getElementById("upgradeCost").textContent =
+        upgradeCost;
+
+    document.getElementById("autoCost").textContent =
+        autoCost;
+}
+
+function showPlus(amount){
+
+    const plus =
+        document.createElement("div");
+
+    plus.className = "plus";
+
+    plus.textContent = "+" + amount;
+
+    plus.style.left =
+        (120 + Math.random()*80) + "px";
+
+    plus.style.top =
+        (130 + Math.random()*50) + "px";
+
+    document.getElementById("floating")
+        .appendChild(plus);
+
+    setTimeout(() => plus.remove(), 800);
+}
+
+function clickCookie(){
+    cookies += cpc;
+    showPlus(cpc);
+    updateDisplay();
+}
+
+function buyUpgrade(){
+
+    if(cookies >= upgradeCost){
+
+        cookies -= upgradeCost;
+
+        cpc++;
+
+        upgradeCost =
+            Math.floor(upgradeCost * 1.5);
+
+        updateDisplay();
+    }
+}
+
+function createCursor(){
+
+    const cursor =
+        document.createElement("div");
+
+    cursor.className = "cursor";
+
+    cursor.style.left =
+        (40 + Math.random()*240) + "px";
+
+    cursor.style.top =
+        (40 + Math.random()*240) + "px";
+
+    cursor.style.animationDelay =
+        Math.random()*2 + "s";
+
+    document.getElementById("cursorArea")
+        .appendChild(cursor);
+}
+
+function buyAuto(){
+
+    if(cookies >= autoCost){
+
+        cookies -= autoCost;
+
+        autoClickers++;
+
+        autoCost =
+            Math.floor(autoCost * 1.8);
+
+        createCursor();
+
+        updateDisplay();
+    }
+}
+
+setInterval(() => {
+
+    cookies += autoClickers;
+
+    updateDisplay();
+
+}, 1000);
+
+updateDisplay();
+</script>
+
+</body>
+</html>
