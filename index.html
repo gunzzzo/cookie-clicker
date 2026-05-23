@@ -2,105 +2,191 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cookie Clicker</title>
+
 <style>
-body{
+*{
     margin:0;
-    font-family:Arial;
-    background: linear-gradient(120deg,#2b1b10,#5a2e12,#2b1b10);
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    repeating-linear-gradient(
+        45deg,
+        #8d5a36,
+        #8d5a36 20px,
+        #7a4e2f 20px,
+        #7a4e2f 40px
+    );
+
     color:white;
-    overflow:hidden;
-}
-
-/* animated background */
-body::before{
-    content:"";
-    position:fixed;
-    width:200%;
-    height:200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.08) 2px, transparent 3px);
-    background-size:50px 50px;
-    animation: moveBg 20s linear infinite;
-    opacity:0.3;
-}
-
-@keyframes moveBg{
-    from{transform:translate(0,0);}
-    to{transform:translate(-200px,-200px);}
 }
 
 .game{
-    width:95%;
-    max-width:1100px;
-    margin:20px auto;
-    background:rgba(0,0,0,0.65);
-    padding:20px;
-    border-radius:20px;
-    box-shadow:0 0 40px black;
+    width:900px;
+    max-width:95%;
+    padding:25px;
+    border-radius:25px;
+
+    background:rgba(40,20,10,.92);
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,.5),
+        inset 0 0 30px rgba(255,255,255,.05);
 }
 
-h1{text-align:center;font-size:2.5rem;}
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    font-size:3rem;
+}
 
-.container{
+.layout{
     display:flex;
-    gap:15px;
+    gap:20px;
     flex-wrap:wrap;
+    justify-content:center;
 }
 
 .panel{
-    flex:1;
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,.08);
+    border-radius:18px;
     padding:15px;
-    border-radius:15px;
-    min-width:250px;
 }
 
-.cookie{
-    width:220px;
-    height:220px;
-    border-radius:50%;
+.left{ width:220px; }
+.center{ flex:1; min-width:320px; text-align:center; }
+.right{ width:220px; }
+
+.stat{
+    margin:10px 0;
+    font-size:1.1rem;
+}
+
+#cookies{
+    color:gold;
+    font-size:2rem;
+    text-shadow:0 0 10px gold, 0 0 20px gold;
+}
+
+.cookie-area{
+    position:relative;
+    width:320px;
+    height:320px;
     margin:auto;
-    cursor:pointer;
-    background: radial-gradient(circle at 30% 30%, #f7d29b, #c07a33);
-    box-shadow:inset 10px 10px 20px rgba(255,255,255,0.2),
-               inset -10px -10px 20px rgba(0,0,0,0.3);
-    transition:transform 0.1s;
 }
 
-.cookie:active{transform:scale(0.92);}
+#cookie{
+    width:280px;
+    height:280px;
+    position:absolute;
+    left:20px;
+    top:20px;
+    cursor:pointer;
+    border-radius:50%;
+
+    background:
+        radial-gradient(circle at 30% 30%,
+            #f5c37a 0%,
+            #e4a85c 35%,
+            #c9863d 75%,
+            #9c5d24 100%);
+
+    box-shadow:
+        inset 12px 12px rgba(255,255,255,.25),
+        inset -15px -15px rgba(0,0,0,.15),
+        0 12px 25px rgba(0,0,0,.35);
+}
+
+#cookie:active{
+    transform:scale(.95);
+}
 
 .chip{
-    position:absolute;
-    width:12px;
-    height:12px;
-    background:#5a2d10;
+    width:20px;
+    height:20px;
     border-radius:50%;
+    background:radial-gradient(circle,#6d3f20,#3b1f10);
+    position:absolute;
+}
+
+.cursor{
+    position:absolute;
+    width:0;
+    height:0;
+
+    border-top:22px solid white;
+    border-right:14px solid transparent;
+
+    transform:rotate(-20deg);
+    filter:drop-shadow(2px 2px 2px rgba(0,0,0,.4));
+
+    animation:float 1.8s infinite;
+}
+
+.cursor::after{
+    content:"";
+    position:absolute;
+    left:-3px;
+    top:-20px;
+
+    width:3px;
+    height:24px;
+    background:white;
+
+    transform:rotate(-45deg);
+}
+
+@keyframes float{
+    0%,100%{ transform:rotate(-20deg) translateY(0); }
+    50%{ transform:rotate(-30deg) translateY(-6px); }
 }
 
 button{
     width:100%;
-    padding:10px;
-    margin-top:8px;
+    margin-top:10px;
+    padding:12px;
+
     border:none;
-    border-radius:10px;
+    border-radius:12px;
+
     cursor:pointer;
-    background:linear-gradient(#ffd27a,#c28a2b);
     font-weight:bold;
+
+    background:linear-gradient(to bottom,#ffe08a,#dba642);
 }
 
-.stat{
-    margin:6px 0;
+button:hover{
+    transform:translateY(-2px);
 }
 
-.float{
+.plus{
     position:absolute;
-    pointer-events:none;
-    animation:rise 1s forwards;
+    font-size:26px;
+    font-weight:bold;
+    color:white;
+    animation:rise .8s forwards;
 }
 
 @keyframes rise{
-    from{opacity:1;transform:translateY(0);}
-    to{opacity:0;transform:translateY(-60px);}
+    from{ opacity:1; transform:translateY(0); }
+    to{ opacity:0; transform:translateY(-60px); }
+}
+
+#floating{
+    position:absolute;
+    width:100%;
+    height:100%;
+    pointer-events:none;
 }
 </style>
 </head>
@@ -108,198 +194,156 @@ button{
 <body>
 
 <div class="game">
-<h1>Cookie Clicker</h1>
 
-<div class="container">
+    <h1>Cookie Clicker</h1>
 
-<div class="panel">
-<h2>Stats</h2>
-<div class="stat">Cookies: <span id="cookies">0</span></div>
-<div class="stat">CPS: <span id="cps">0</span></div>
-<div class="stat">Prestige: <span id="prestige">0</span></div>
-</div>
+    <div class="layout">
 
-<div class="panel" style="text-align:center;position:relative;">
-<div id="cookie" class="cookie" onclick="clickCookie()"></div>
-</div>
+        <div class="panel left">
+            <h2>Stats</h2>
 
-<div class="panel">
-<h2>Shop</h2>
+            <div class="stat">
+                Cookies:
+                <div id="cookies">0</div>
+            </div>
 
-<button onclick="buy('grandma')">👵 Grandma (10 CPS) - <span id="gCost">50</span></button>
-<button onclick="buy('farm')">🌾 Farm (50 CPS) - <span id="fCost">500</span></button>
-<button onclick="buy('factory')">🏭 Factory (200 CPS) - <span id="faCost">5000</span></button>
+            <div class="stat">
+                Per Click:
+                <span id="cpc">1</span>
+            </div>
 
-<button onclick="prestige()">⭐ Prestige Reset</button>
+            <div class="stat">
+                Auto Clickers:
+                <span id="autoCount">0</span>
+            </div>
+        </div>
 
-</div>
+        <div class="panel center">
 
-</div>
+            <div class="cookie-area">
+
+                <div id="floating"></div>
+
+                <div id="cookie" onclick="clickCookie()">
+
+                    <div class="chip" style="top:40px;left:60px;"></div>
+                    <div class="chip" style="top:70px;left:150px;"></div>
+                    <div class="chip" style="top:110px;left:90px;"></div>
+                    <div class="chip" style="top:150px;left:180px;"></div>
+                    <div class="chip" style="top:200px;left:120px;"></div>
+
+                </div>
+
+                <div id="cursorArea"></div>
+
+            </div>
+
+        </div>
+
+        <div class="panel right">
+            <h2>Shop</h2>
+
+            <button onclick="buyUpgrade()">
+                Upgrade Click<br>
+                Cost: <span id="upgradeCost">10</span>
+            </button>
+
+            <button onclick="buyAuto()">
+                Buy Cursor<br>
+                Cost: <span id="autoCost">40</span>
+            </button>
+        </div>
+
+    </div>
+
 </div>
 
 <script>
 let cookies = 0;
-let prestige = 0;
+let cpc = 1;
 
-let cps = 0;
-
-let grandma = 0;
-let farm = 0;
-let factory = 0;
-
-let gCost = 50;
-let fCost = 500;
-let faCost = 5000;
-
-function clickCookie(){
-    cookies += 1 + prestige;
-
-    showFloat("+1");
-
-    update();
-}
-
-function buy(type){
-    if(type==="grandma" && cookies>=gCost){
-        cookies -= gCost;
-        grandma++;
-        cps += 10;
-        gCost = Math.floor(gCost*1.15);
-    }
-
-    if(type==="farm" && cookies>=fCost){
-        cookies -= fCost;
-        farm++;
-        cps += 50;
-        fCost = Math.floor(fCost*1.18);
-    }
-
-    if(type==="factory" && cookies>=faCost){
-        cookies -= faCost;
-        factory++;
-        cps += 200;
-        faCost = Math.floor(faCost*1.2);
-    }
-
-    update();
-}
-
-function prestige(){
-    if(cookies > 10000){
-        prestige += Math.floor(cookies/10000);
-        cookies = 0;
-        cps = 0;
-        grandma = farm = factory = 0;
-        gCost=50; fCost=500; faCost=5000;
-    }
-    update();
-}
-
-function showFloat(text){
-    let el = document.createElement("div");
-    el.className="float";
-    el.innerText=text;
-    el.style.left="50%";
-    el.style.top="50%";
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),1000);
-}
+let upgradeCost = 10;
+let autoClickers = 0;
+let autoCost = 40;
 
 function update(){
-    document.getElementById("cookies").innerText=Math.floor(cookies);
-    document.getElementById("cps").innerText=cps;
-    document.getElementById("prestige").innerText=prestige;
-
-    document.getElementById("gCost").innerText=gCost;
-    document.getElementById("fCost").innerText=fCost;
-    document.getElementById("faCost").innerText=faCost;
+    document.getElementById("cookies").textContent = Math.floor(cookies);
+    document.getElementById("cpc").textContent = cpc;
+    document.getElementById("autoCount").textContent = autoClickers;
+    document.getElementById("upgradeCost").textContent = upgradeCost;
+    document.getElementById("autoCost").textContent = autoCost;
 }
 
+function clickCookie(){
+    cookies += cpc;
+
+    const pop = document.createElement("div");
+    pop.className = "plus";
+    pop.textContent = "+" + cpc;
+    pop.style.left = "130px";
+    pop.style.top = "120px";
+
+    document.getElementById("floating").appendChild(pop);
+    setTimeout(()=>pop.remove(),800);
+
+    update();
+}
+
+function buyUpgrade(){
+    if(cookies >= upgradeCost){
+        cookies -= upgradeCost;
+        cpc++;
+
+        upgradeCost = Math.floor(upgradeCost * 2.0);
+
+        update();
+    }
+}
+
+function buyAuto(){
+    if(cookies >= autoCost){
+        cookies -= autoCost;
+        autoClickers++;
+
+        autoCost = Math.floor(autoCost * 2.3);
+
+        const cursor = document.createElement("div");
+        cursor.className = "cursor";
+
+        cursor.style.left = Math.random()*250 + "px";
+        cursor.style.top = Math.random()*250 + "px";
+
+        document.getElementById("cursorArea").appendChild(cursor);
+
+        update();
+    }
+}
+
+/* AUTO COOKIES */
 setInterval(()=>{
-    cookies += cps/10;
+    cookies += autoClickers;
     update();
-},100);
+},1000);
 
-update();
-
-<script>
-// ===== SAVE SYSTEM =====
-function saveGame(){
-    localStorage.setItem("cookieSave", JSON.stringify({
-        cookies, cps, prestige,
-        grandma, farm, factory,
-        gCost, fCost, faCost
-    }));
-}
-
-function loadGame(){
-    let data = JSON.parse(localStorage.getItem("cookieSave"));
-    if(!data) return;
-
-    cookies = data.cookies;
-    cps = data.cps;
-    prestige = data.prestige;
-
-    grandma = data.grandma;
-    farm = data.farm;
-    factory = data.factory;
-
-    gCost = data.gCost;
-    fCost = data.fCost;
-    faCost = data.faCost;
-
-    update();
-}
-
-setInterval(saveGame, 3000);
-loadGame();
-
-// ===== KEYBINDS =====
-document.addEventListener("keydown", (e)=>{
-    if(e.key==="t"){
+/* CHEAT KEY: T = +1,000,000 */
+document.addEventListener("keydown", function(event){
+    if(event.key.toLowerCase() === "t"){
         cookies += 1000000;
-    }
-    if(e.key==="r"){
-        localStorage.clear();
-        location.reload();
-    }
-    if(e.key==="p"){
-        prestige();
+
+        const pop = document.createElement("div");
+        pop.className = "plus";
+        pop.textContent = "+1,000,000 (CHEAT)";
+        pop.style.left = "90px";
+        pop.style.top = "100px";
+
+        document.getElementById("floating").appendChild(pop);
+        setTimeout(()=>pop.remove(),900);
+
+        update();
     }
 });
 
-// ===== ACHIEVEMENTS =====
-let achievements = [];
-
-function checkAchievements(){
-    if(cookies>1000 && !achievements.includes("1k")){
-        achievements.push("1k");
-        alert("Achievement: 1,000 Cookies!");
-    }
-
-    if(cookies>1000000 && !achievements.includes("1m")){
-        achievements.push("1m");
-        alert("Achievement: 1,000,000 Cookies!");
-    }
-
-    if(grandma>0 && !achievements.includes("grandma")){
-        achievements.push("grandma");
-        alert("Achievement: First Grandma!");
-    }
-}
-
-setInterval(checkAchievements, 2000);
-
-// ===== POLISH AUTO EFFECTS =====
-setInterval(()=>{
-    document.body.style.filter = `hue-rotate(${Math.random()*10}deg)`;
-},5000);
-
-// ===== AUTO CPS =====
-setInterval(()=>{
-    cookies += cps/10;
-    update();
-},100);
+update();
 </script>
 
 </body>
